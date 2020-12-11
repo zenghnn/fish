@@ -22,7 +22,7 @@ func initConf() (err error) {
 	if common.AccountConf.AccountAesKey == "" || len(common.AccountConf.AccountAesKey) < 16 {
 		return fmt.Errorf("conf err: invalid account_aes_key :%v", common.AccountConf.AccountAesKey)
 	}
-	logs.Debug("account_aes_key :%v",common.AccountConf.AccountAesKey)
+	logs.Debug("account_aes_key :%v", common.AccountConf.AccountAesKey)
 
 	common.AccountConf.LogPath = conf.String("log_path")
 	if common.AccountConf.LogPath == "" {
@@ -38,6 +38,10 @@ func initConf() (err error) {
 	common.AccountConf.RedisConf.RedisAddrs = conf.Strings("redis_addrs")
 	if len(common.AccountConf.RedisConf.RedisAddrs) == 0 {
 		return fmt.Errorf("conf err: redis addr is null")
+	}
+	common.AccountConf.RedisConf.RedisPwd = conf.String("redis_pwd")
+	if len(common.AccountConf.RedisConf.RedisPwd) == 0 {
+		fmt.Errorf("conf : redis pwd is null")
 	}
 	common.AccountConf.RedisConf.RedisKeyPrefix = conf.String("redis_key_prefix")
 	if len(common.AccountConf.RedisConf.RedisKeyPrefix) == 0 {

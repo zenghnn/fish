@@ -7,14 +7,18 @@
     git clone https://github.com/dwg255/fish
 
 2.编译:
-
+    
+    (mac 和linux 下把\换成/)
     cd fish\
-    go build -o account.exe account\main\main.go account\main\init.go account\main\config.go
-    go build -o hall.exe hall\main\main.go hall\main\init.go hall\main\config.go
-    go build -o fish.exe game\main\main.go game\main\init.go game\main\config.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o accountLoc account/main/main.go account/main/init.go account/main/config.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o hallLoc hall/main/main.go hall/main/init.go hall/main/config.go
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o fishLoc game/main/main.go game/main/init.go game/main/config.go
 
 3.解压客户端:
     tar -zxvf fish.tar.gz /var/www/html/client/fish
+    修改./client/fish/src/project.js   中的hall地址
+    修改./common/conf/game.conf   中的hall_host port  地址
+    (./client/project.js是我自己修改的 作个备份用)
 
 4.配置nginx:
 ```

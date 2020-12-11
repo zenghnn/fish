@@ -59,8 +59,8 @@ func initRedis() (err error) {
 	//}
 	//common.AccountConf.RedisConf.RedisPool = client
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
+		Addr:     common.AccountConf.RedisConf.RedisAddrs[0],
+		Password: common.AccountConf.RedisConf.RedisPwd,
 		DB:       0,
 	})
 	common.AccountConf.RedisConf.RedisPool = client

@@ -68,7 +68,7 @@ func main() {
 				resp, err := http.Get(urlPath)
 				s, err := ioutil.ReadAll(resp.Body)
 				if string(s) != "success" {
-					logs.Info("register game server response:", string(s))
+					logs.Info("register game server response:", string(s), urlPath)
 				}
 				_ = resp.Body.Close()
 			}

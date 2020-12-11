@@ -25,7 +25,7 @@ func Guest(w http.ResponseWriter, r *http.Request) {
 	if len(sign) == 0 || sign == "null" {
 		qqLoginUrl := fmt.Sprintf("https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=%d&redirect_uri=%s&state=1", appId, redirectUri)
 		ret := map[string]interface{}{
-			"errcode": 1,
+			"errcode":    1,
 			"qqLoginUrl": qqLoginUrl,
 		}
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -127,6 +127,58 @@ func Guest(w http.ResponseWriter, r *http.Request) {
 	} else {
 		logs.Error("get rpc client err: %v", err)
 	}*/
+}
+
+func NewGuest(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			logs.Error("Guest panic:%v ", r)
+		}
+	}()
+	//logs.Debug("new request url:[%s]",r.URL)
+	account := r.FormValue("account")
+	//if len(account) == 0 {
+	//	logs.Debug("account is zero")
+	//	return
+	//}
+	rand.Seed(time.Now().UnixNano())
+	account = firstName[rand.Intn(len(firstName)-1)] + secondName[rand.Intn(len(secondName)-1)]
+	if client, closeTransportHandler, err := tools.GetRpcClient(common.HallConf.AccountHost, strconv.Itoa(common.HallConf.AccountPort)); err == nil {
+		defer func() {
+			if err := closeTransportHandler(); err != nil {
+				logs.Error("close rpc err: %v", err)
+			}
+		}()
+		sign := ""
+		if r, err := client.CreateNewUser(context.Background(), account, "1", 1000000); err == nil {
+			if r.Code == rpc.ErrorCode_Success {
+				sign = r.UserObj.Token
+			}
+		} else {
+			logs.Error("call rpc Guest err: %v", err)
+		}
+		ret := map[string]interface{}{
+			"errcode": 0,
+			"errmsg":  "ok",
+			//"account":  "guest_" + account,
+			"account":  account,
+			"halladdr": common.HallConf.HallHost + ":" + strconv.Itoa(common.HallConf.HallPort),
+			"sign":     sign,
+		}
+		defer func() {
+			data, err := json.Marshal(ret)
+			if err != nil {
+				logs.Error("json marsha1 failed err:%v", err)
+				return
+			}
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			if _, err := w.Write(data); err != nil {
+				logs.Error("CreateRoom err: %v", err)
+			}
+		}()
+	} else {
+		logs.Error("get rpc client err: %v", err)
+	}
 }
 
 var (

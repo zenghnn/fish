@@ -24,6 +24,7 @@ type AccountServiceConf struct {
 type RedisConf struct {
 	RedisAddrs     []string
 	RedisKeyPrefix string
+	RedisPwd       string
 	//RedisPool      *redis.ClusterClient
 	RedisPool *redis.Client
 }
